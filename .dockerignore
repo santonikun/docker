@@ -1,0 +1,15 @@
+.git
+.gitignore
+.dockerignore
+README.md
+*.log
+.DS_Store
+workspace/
+shared/
+.vscode/
+.idea/
+*.swp
+*.swo
+node_modules/
+__pycache__/
+*.pyc

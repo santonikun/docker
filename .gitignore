@@ -1,0 +1,36 @@
+# Docker and volumes
+.docker/
+docker-data/
+volumes/
+
+# Container workspace
+workspace/
+shared/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+.tmp/
+temp/
+tmp/
+
+# Environment files
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git LFS
+*.lfs

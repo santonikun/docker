@@ -1,0 +1,108 @@
+version: '3.9'
+
+services:
+  kali:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kali-linux-complete:latest
+    container_name: kali-linux
+    
+    # Interactive terminal
+    stdin_open: true
+    tty: true
+    
+    # Network configuration
+    networks:
+      - kali-network
+    
+    # Port mappings
+    ports:
+      - "22:22"      # SSH
+      - "80:80"      # HTTP
+      - "443:443"    # HTTPS
+      - "8080:8080"  # HTTP Alt
+      - "8443:8443"  # HTTPS Alt
+      - "3306:3306"  # MySQL
+      - "5432:5432"  # PostgreSQL
+      - "5900:5900"  # VNC
+      - "9200:9200"  # Elasticsearch
+    
+    # Volume mounts for persistence
+    volumes:
+      # Workspace directory
+      - ./workspace:/root/workspace
+      # Home directory (for settings/tools)
+      - kali-home:/root
+      # Tools configuration
+      - kali-config:/etc/kali
+      # Shared data with host
+      - ./shared:/shared
+    
+    # Environment variables
+    environment:
+      - DISPLAY=:0
+      - DEBIAN_FRONTEND=noninteractive
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    
+    # Security options (if needed for certain tools)
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    
+    # Uncomment to run as privileged (use with caution)
+    # privileged: true
+    
+    restart: unless-stopped
+
+  # Optional: Postgres for testing
+  postgres:
+    image: postgres:15-alpine
+    container_name: kali-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: testdb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - kali-network
+    restart: unless-stopped
+
+  # Optional: MySQL for testing
+  mysql:
+    image: mysql:8.0
+    container_name: kali-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+      MYSQL_DATABASE: testdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - kali-network
+    restart: unless-stopped
+
+networks:
+  kali-network:
+    driver: bridge
+
+volumes:
+  kali-home:
+  kali-config:
+  postgres-data:
+  mysql-data:
